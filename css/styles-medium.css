@@ -1,0 +1,31 @@
+#breadcrumb {
+  padding: 10px 40px 16px;
+}
+.inside #maincontent { 
+  flex-direction: row;
+}
+.inside #map-container {
+  width: 50%;
+  height: 90vh;
+}
+#restaurant-container, #reviews-container {  
+  width: 50%;
+}
+.inside #restaurant-container {
+  order: 0;
+}
+.inside #map-container {
+  order: 1;
+}
+.inside #reviews-container {
+  order: 2;
+}
+#restaurants-list li {
+  width: calc(50% - 30px);
+}  
+@media only screen and (min-width: 800px) {
+  #restaurants-list li {
+    width: calc(33.33% - 30px);
+  } 
+}
+  
