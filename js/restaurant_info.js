@@ -20,6 +20,17 @@ window.initMap = () => {
   });
 }
 
+window.onMapsError = () => {
+  console.warn('maps loading error :( ');
+  fetchRestaurantFromURL((error, restaurant) => {
+    if (error) { // Got an error!
+      console.error(error);
+    } else {
+      fillBreadcrumb();
+    }
+  });
+};
+
 /**
  * Get current restaurant from page URL.
  */

@@ -4,6 +4,8 @@ let restaurants,
 var map
 var markers = []
 
+SWHelper.register();
+
 /**
  * Fetch neighborhoods and cuisines as soon as the page is loaded.
  */
@@ -82,6 +84,11 @@ window.initMap = () => {
   });
   updateRestaurants();
 }
+
+window.onMapsError = () => {
+  console.warn('maps loading error :( ');
+  updateRestaurants();
+};
 
 /**
  * Update page and map for current restaurants.

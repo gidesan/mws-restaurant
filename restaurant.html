@@ -54,17 +54,19 @@
 
   <!-- Beginning footer -->
   <footer id="footer">
-    Copyright (c) 2017 <a href="/"><strong>Restaurant Reviews</strong></a> All Rights Reserved.
+    Copyright (c) 2018 <a href="/"><strong>Restaurant Reviews</strong></a> All Rights Reserved.
   </footer>
   <!-- End footer -->
 
   <!-- Beginning scripts -->
+  <!-- Service worker helpers -->
+  <script type="text/javascript" src="js/swhelper.js"></script>
   <!-- Database helpers -->
   <script type="text/javascript" src="js/dbhelper.js"></script>
   <!-- Main javascript file -->
   <script type="text/javascript" src="js/restaurant_info.js"></script>
   <!-- Google Maps -->
-  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBGLqWXqDetn8Cu0NfpDSloIWSwLupNRYE&libraries=places&callback=initMap"></script>
+  <script async defer onerror="onMapsError()" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBGLqWXqDetn8Cu0NfpDSloIWSwLupNRYE&libraries=places&callback=initMap"></script>
   <!-- End scripts -->
 
 </body>
