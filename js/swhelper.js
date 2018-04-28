@@ -1,5 +1,6 @@
 class SWHelper {
   static register() {
+    // based on service worker registration in https://github.com/facebook/create-react-app/
     const swUrl = '/sw.js';
     navigator.serviceWorker
       .register(swUrl)
