@@ -8,7 +8,8 @@
   width: 50%;
   height: 90vh;
 }
-#restaurant-container, #reviews-container {  
+#restaurant-container, 
+#reviews-container {  
   width: 50%;
 }
 .inside #restaurant-container {
