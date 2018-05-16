@@ -11,7 +11,6 @@ self.addEventListener('install', (event) => {
       return cache.addAll([
         'index.html',
         'restaurant.html',        
-        'data/restaurants.json',
         'js/main.js',
         'js/swhelper.js',
         'js/dbhelper.js',
