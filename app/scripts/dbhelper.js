@@ -1,3 +1,4 @@
+import idb from 'idb';
 /**
  * Common database helper functions.
  */
@@ -12,12 +13,41 @@ export class DBHelper {
     return `http://localhost:${port}/restaurants`;
   }
 
+  static get IDB_NAME() {
+    return 'rr-app';
+  }
+
+  static get IDB_RESTAURANTS() {
+    return 'restaurants';
+  }
+
   /**
    * Fetch all restaurants.
    */
   static fetchRestaurants() {
     return fetch(DBHelper.DATABASE_URL)
-      .then(response => response.json());
+      .then(response => response.json())
+      .then(restaurants => {
+        DBHelper.openIDB().then(idb => {
+          if (!idb) return;
+
+          const tx = idb.transaction(this.IDB_RESTAURANTS, 'readwrite');
+          const store = tx.objectStore(this.IDB_RESTAURANTS);
+          restaurants.forEach((restaurant) => {
+            store.put(restaurant);
+          });
+        });
+        return restaurants;
+      })
+      .catch(err => {
+        return DBHelper.openIDB().then(idb => {
+          if (!idb) return;
+
+          const tx = idb.transaction(this.IDB_RESTAURANTS);
+          const store = tx.objectStore(this.IDB_RESTAURANTS);
+          return store.getAll();
+        });
+      });
   }
 
   /**
@@ -26,7 +56,16 @@ export class DBHelper {
   static fetchRestaurantById(id) {
     const url = `${DBHelper.DATABASE_URL}/${id}`;
     return fetch(url)
-      .then(response => response.json());
+      .then(response => response.json())
+      .catch(() => {
+        return DBHelper.openIDB().then(idb => {
+          if (!idb) return;
+
+          const tx = idb.transaction(this.IDB_RESTAURANTS);
+          const store = tx.objectStore(this.IDB_RESTAURANTS);
+          return store.get(parseInt(id));
+        });
+      });
   }
 
   /**
@@ -131,4 +170,18 @@ export class DBHelper {
     );
     return marker;
   }
+
+  static openIDB() {
+    if (!navigator.serviceWorker) {
+      return Promise.resolve();
+    }
+
+    return idb.open(this.IDB_NAME, 1, (upgradeDb) => {
+      const store = upgradeDb.createObjectStore(this.IDB_RESTAURANTS, {
+        keyPath: 'id'
+      });
+    });
+  }
+
+
 }

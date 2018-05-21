@@ -7,7 +7,6 @@ let restaurants,
 var map
 var markers = []
 
-const dbPromise = SWHelper.openDatabase();
 SWHelper.register();
 
 /**

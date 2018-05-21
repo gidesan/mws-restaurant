@@ -1,17 +1,4 @@
-import idb from 'idb';
 export class SWHelper {
-  static openDatabase() {
-    if (!navigator.serviceWorker) {
-      return Promise.resolve();
-    }
-
-    return idb.open('rr-app', 1, (upgradeDb) => {
-      const store = upgradeDb.createObjectStore('restaurants', {
-        keyPath: 'id'
-      });
-    });
-  }
-
   static register() {
     // based on service worker registration in https://github.com/facebook/create-react-app/
     const swUrl = '/sw.js';
