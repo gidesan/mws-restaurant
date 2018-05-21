@@ -1,9 +1,13 @@
+import { DBHelper } from './dbhelper';
+import { SWHelper } from './swhelper';
+
 let restaurants,
   neighborhoods,
   cuisines
 var map
 var markers = []
 
+const dbPromise = SWHelper.openDatabase();
 SWHelper.register();
 
 /**
@@ -13,8 +17,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
   fetchNeighborhoods();
   fetchCuisines();
 });
-
-const onError = (error) => console.error(error);
 
 /**
  * Fetch all neighborhoods and set their HTML.
@@ -123,7 +125,7 @@ const resetRestaurants = (restaurants) => {
   ul.innerHTML = '';
 
   // Remove all map markers
-  self.markers.forEach(m => m.setMap(null));
+  self.markers && self.markers.forEach(m => m.setMap(null));
   self.markers = [];
   self.restaurants = restaurants;
 }
