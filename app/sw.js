@@ -10,14 +10,10 @@ self.addEventListener('install', (event) => {
     caches.open(staticCacheName).then((cache) => {
       return cache.addAll([
         'index.html',
-        'restaurant.html',        
-        'js/main.js',
-        'js/swhelper.js',
-        'js/dbhelper.js',
-        'js/restaurant_info.js',
-        'css/styles.css',
-        'css/styles-medium.css',
-        'css/styles-large.css'
+        'restaurant.html',
+        'scripts/bundle.js',
+        'scripts/bundle-detail.js',
+        'styles/styles.css'
       ]);
     })
   );
@@ -46,7 +42,7 @@ self.addEventListener('fetch', function(event) {
       event.respondWith(caches.match('index.html'));
       return;
     }
-    if (requestUrl.pathname.startsWith('/img/')) {
+    if (requestUrl.pathname.startsWith('/images/')) {
       event.respondWith(servePhoto(event.request));
       return;
     }
