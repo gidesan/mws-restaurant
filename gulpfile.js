@@ -103,7 +103,7 @@ gulp.task('images', () => {
         {
           width: 228,
           suffix: '-1x',
-          quality: 10
+          quality: 40
         },
         {
           width: 228 * 2,
