@@ -94,7 +94,7 @@ window.onMapsError = () => {
 /**
  * Update page and map for current restaurants.
  */
-const updateRestaurants = () => {
+window.updateRestaurants = () => {
   const cSelect = document.getElementById('cuisines-select');
   const nSelect = document.getElementById('neighborhoods-select');
 
@@ -203,7 +203,10 @@ const addMarkersToMap = (restaurants = self.restaurants) => {
   });
 }
 
-
+window.toggleMap = () => {
+  const currentState = document.getElementById('map').style.display;
+  document.getElementById('map').style.display = currentState === 'none' ? 'block' : 'none';
+}
 
 function preloadImage(img) {
   const src = img.preloadSrc;

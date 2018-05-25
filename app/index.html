@@ -30,11 +30,13 @@
         <nav>
           <h1><a href="/">Restaurant Reviews</a></h1>
         </nav>
+        <div class="map-toggle">
+          <button onclick="toggleMap()" title="Toggle map" aria-label="Toggle restaurants map"></button>
+        </div>
       </header>
-
       <main id="maincontent">
         <section id="map-container" tabindex="0" role="application" aria-label="Restaurants map">
-          <div id="map"></div>
+          <div id="map" style="display: none"></div>
         </section>
         <section>
           <div class="filter-options">
