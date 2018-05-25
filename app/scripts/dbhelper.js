@@ -150,11 +150,19 @@ export class DBHelper {
   }
 
   /**
-   * Restaurant image URL.
+   * Restaurant low resolution image URL.
    */
   static imageUrlForRestaurant(restaurant) {
     const imgFileName = restaurant.photograph || '10'; // WORKAROUND fixes 10th restaurant's image
-    return (`/images/${imgFileName}.jpg`);
+    return (`/images/${imgFileName}-1x.jpg`);
+  }
+
+  /**
+   * Restaurant high resolution image URL.
+   */
+  static hiResImageUrlForRestaurant(restaurant) {
+    const imgFileName = restaurant.photograph || '10'; // WORKAROUND fixes 10th restaurant's image
+    return (`/images/${imgFileName}-2x.jpg`);
   }
 
   /**
@@ -166,8 +174,8 @@ export class DBHelper {
       title: restaurant.name,
       url: DBHelper.urlForRestaurant(restaurant),
       map: map,
-      animation: google.maps.Animation.DROP}
-    );
+      animation: null
+    });
     return marker;
   }
 

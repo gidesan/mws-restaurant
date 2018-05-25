@@ -129,6 +129,20 @@ const resetRestaurants = (restaurants) => {
   self.restaurants = restaurants;
 }
 
+const config = {
+  rootMargin: '0px 0px 50px 0px',
+  threshold: 0
+};
+let observer = new IntersectionObserver(function (entries, self) {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      preloadImage(entry.target);
+      self.unobserve(entry.target);
+    }
+  });
+}, config);
+
+
 /**
  * Create all restaurants HTML and add them to the webpage.
  */
@@ -149,7 +163,7 @@ const createRestaurantHTML = (restaurant) => {
 
   const image = document.createElement('img');
   image.className = 'restaurant-img';
-  image.src = DBHelper.imageUrlForRestaurant(restaurant);
+  image.preloadSrc = DBHelper.imageUrlForRestaurant(restaurant);
   image.alt = restaurant.name;
   li.append(image);
 
@@ -170,6 +184,8 @@ const createRestaurantHTML = (restaurant) => {
   more.href = DBHelper.urlForRestaurant(restaurant);
   li.append(more)
 
+  observer.observe(image);
+
   return li;
 }
 
@@ -185,4 +201,12 @@ const addMarkersToMap = (restaurants = self.restaurants) => {
     });
     self.markers.push(marker);
   });
+}
+
+
+
+function preloadImage(img) {
+  const src = img.preloadSrc;
+  if (!src) { return; }
+  img.src = src;
 }

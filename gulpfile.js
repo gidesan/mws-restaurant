@@ -9,6 +9,7 @@ const babelify = require('babelify');
 const buffer = require('vinyl-buffer');
 const source = require('vinyl-source-stream');
 const runSequence = require('run-sequence');
+const responsiveImg = require('gulp-responsive-images');
 
 const $ = gulpLoadPlugins();
 const reload = browserSync.reload;
@@ -97,8 +98,26 @@ gulp.task('html', ['styles', 'scripts'], () => {
 
 gulp.task('images', () => {
   return gulp.src('app/images/**/*')
+    .pipe(responsiveImg({
+      '*.jpg': [
+        {
+          width: 228,
+          suffix: '-1x',
+          quality: 10
+        },
+        {
+          width: 228 * 2,
+          suffix: '-2x',
+          quality: 75
+      }]
+    }))
+    .pipe($.if(dev, gulp.dest('.tmp/images'), gulp.dest('dist/images')));
+});
+
+gulp.task('icons', () => {
+  return gulp.src('app/icons/**/*')
     .pipe($.cache($.imagemin()))
-    .pipe(gulp.dest('dist/images'));
+    .pipe(gulp.dest('dist/icons'));
 });
 
 gulp.task('fonts', () => {
@@ -119,7 +138,7 @@ gulp.task('extras', () => {
 gulp.task('clean', del.bind(null, ['.tmp', 'dist']));
 
 gulp.task('serve', () => {
-  runSequence(['clean', 'wiredep'], ['styles', 'scripts', 'fonts'], () => {
+  runSequence(['clean', 'wiredep'], ['styles', 'scripts', 'images', 'fonts'], () => {
     browserSync.init({
       notify: false,
       port: 9000,
@@ -182,7 +201,7 @@ gulp.task('wiredep', () => {
     .pipe(gulp.dest('app'));
 });
 
-gulp.task('build', ['lint', 'html', 'images', 'fonts', 'extras'], () => {
+gulp.task('build', ['lint', 'html', 'images', 'icons', 'fonts', 'extras'], () => {
   return gulp.src('dist/**/*').pipe($.size({title: 'build', gzip: true}));
 });
 

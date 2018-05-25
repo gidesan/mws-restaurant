@@ -1,7 +1,10 @@
 import { DBHelper } from './dbhelper';
+import { SWHelper } from './swhelper';
 
 let restaurant;
 var map;
+
+SWHelper.register();
 
 const onError = (error) => console.error(error);
 
@@ -64,7 +67,7 @@ const fillRestaurantHTML = (restaurant = self.restaurant) => {
 
   const image = document.getElementById('restaurant-img');
   image.className = 'restaurant-img';
-  image.src = DBHelper.imageUrlForRestaurant(restaurant);
+  image.src = DBHelper.hiResImageUrlForRestaurant(restaurant);
   image.alt = `Image of restaurant ${restaurant.name}`;
 
   const cuisine = document.getElementById('restaurant-cuisine');
