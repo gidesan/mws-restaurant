@@ -44,9 +44,10 @@
     <!-- Beginning main -->
     <main id="maincontent">
       <!-- Beginning map -->
-      <section id="map-container" tabindex="0" role="application" aria-label="Restaurant map">
-        <div id="map"></div>
+      <section id="map-container" tabindex="0" role="application">
+        <img id="static-map" aria-label="Restaurant map">
       </section>
+
       <!-- End map -->
       <!-- Beginning restaurant -->
       <section id="restaurant-container">
@@ -80,7 +81,6 @@
     <!-- build:js scripts/bundle-detail.js -->
     <script type="application/javascript" charset="utf-8" src="scripts/bundle-detail.js"></script>
     <!-- endbuild -->
-    <script async defer onerror="onMapsError()" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBGLqWXqDetn8Cu0NfpDSloIWSwLupNRYE&libraries=places&callback=initMap"></script>
 
   </body>
 </html>

@@ -8,29 +8,7 @@ SWHelper.register();
 
 const onError = (error) => console.error(error);
 
-/**
- * Initialize Google map, called from HTML.
- */
-window.initMap = () => {
-  fetchRestaurantFromURL().then((restaurant) => {
-    self.map = new google.maps.Map(document.getElementById('map'), {
-      zoom: 16,
-      center: restaurant.latlng,
-      scrollwheel: false
-    });
-    fillBreadcrumb();
-    DBHelper.mapMarkerForRestaurant(self.restaurant, self.map);
-  })
-  .catch(onError);
-}
-
-window.onMapsError = () => {
-  console.warn('maps loading error :( ');
-  fetchRestaurantFromURL().then((restaurant) => {
-    fillBreadcrumb();
-  })
-  .catch(onError);
-};
+const MAPS_API_KEY = 'AIzaSyBGLqWXqDetn8Cu0NfpDSloIWSwLupNRYE';
 
 /**
  * Get current restaurant from page URL.
@@ -69,6 +47,10 @@ const fillRestaurantHTML = (restaurant = self.restaurant) => {
   image.className = 'restaurant-img';
   image.src = DBHelper.hiResImageUrlForRestaurant(restaurant);
   image.alt = `Image of restaurant ${restaurant.name}`;
+
+  const staticMapImage = document.getElementById('static-map');
+  staticMapImage.src = `https://maps.googleapis.com/maps/api/staticmap?key=${MAPS_API_KEY}&size=500x400&markers=color:red%7Clabel:S%7C${restaurant.latlng.lat},${restaurant.latlng.lng}`;
+  staticMapImage.alt = `Map of restaurant ${restaurant.name}`;
 
   const cuisine = document.getElementById('restaurant-cuisine');
   cuisine.innerHTML = restaurant.cuisine_type;
@@ -174,3 +156,7 @@ const getParameterByName = (name, url) => {
     return '';
   return decodeURIComponent(results[2].replace(/\+/g, ' '));
 }
+
+fetchRestaurantFromURL().then((restaurant) => {
+  fillBreadcrumb();
+})
