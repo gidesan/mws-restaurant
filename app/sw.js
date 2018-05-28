@@ -35,21 +35,23 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', function(event) {
-  const requestUrl = new URL(event.request.url);
+  const urlString = event.request.url;
+  const requestUrl = new URL(urlString);
 
   if (requestUrl.origin === location.origin) {
     if (requestUrl.pathname === '/') {
       event.respondWith(caches.match('index.html'));
       return;
     }
-    if (requestUrl.pathname.startsWith('/images/')) {
+    else if (requestUrl.pathname.startsWith('/images/')) {
       event.respondWith(servePhoto(event.request));
       return;
     }
   }
+  const urlStringWithoutParams = urlString.includes('?') ? urlString.replace(/\?(.)*$/, '') : urlString;
 
   event.respondWith(
-    caches.match(event.request).then(function(response) {
+    caches.match(urlStringWithoutParams).then(function(response) {
       return response || fetch(event.request);
     })
   );
