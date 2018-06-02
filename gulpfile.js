@@ -9,7 +9,7 @@ const babelify = require('babelify');
 const buffer = require('vinyl-buffer');
 const source = require('vinyl-source-stream');
 const runSequence = require('run-sequence');
-const responsiveImg = require('gulp-responsive-images');
+const responsive = require('gulp-responsive');
 
 const $ = gulpLoadPlugins();
 const reload = browserSync.reload;
@@ -98,16 +98,20 @@ gulp.task('html', ['styles', 'scripts'], () => {
 
 gulp.task('images', () => {
   return gulp.src('app/images/**/*')
-    .pipe(responsiveImg({
+    .pipe(responsive({
       '*.jpg': [
         {
           width: 228,
-          suffix: '-1x',
+          rename: {
+            suffix: '-1x'
+          },          
           quality: 40
         },
         {
           width: 228 * 2,
-          suffix: '-2x',
+          rename: {
+            suffix: '-2x'
+          },          
           quality: 75
       }]
     }))
