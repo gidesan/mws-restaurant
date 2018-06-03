@@ -164,7 +164,7 @@ nav h1 a {
 }
 /* ====================== Map ====================== */
 #map {
-  height: 200px;
+  max-height: 400px;
   width: 100%;
   background-color: #ccc;
 }
@@ -253,7 +253,7 @@ nav h1 a {
 }
 .inside #map-container {
   background: #f3f3f3 none repeat scroll 0 0;
-  height: 200px;
+  max-height: 400px !important;
   width: 100%;
 }
 .inside #map {
