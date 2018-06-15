@@ -3,14 +3,15 @@ import { SWHelper } from './swhelper';
 
 let restaurant;
 let reviews;
-let favorite = false;
 
 SWHelper.register();
 
 const MAPS_API_KEY = 'AIzaSyBGLqWXqDetn8Cu0NfpDSloIWSwLupNRYE';
 
 self.toggleFavorite = () => {
-  favorite = !favorite;
+  const favorite = self.restaurant.is_favorite = !self.restaurant.is_favorite;
+
+  
 
   const favBtnId = 'fav-button';
   const favBtnSelectedClass = 'fav-button-selected';
@@ -125,19 +126,19 @@ const fillReviewsHTML = (reviews = self.restaurant.reviews) => {
   const container = document.getElementById('reviews-container');
   const title = document.createElement('h3');
   title.innerHTML = 'Reviews';
-  container.appendChild(title);
+  container.insertBefore(title, container.firstChild);
 
   if (!reviews) {
     const noReviews = document.createElement('p');
     noReviews.innerHTML = 'No reviews yet!';
-    container.appendChild(noReviews);
+    container.insertBefore(title, container.firstChild);
     return;
   }
   const ul = document.getElementById('reviews-list');
   reviews.forEach(review => {
     ul.appendChild(createReviewHTML(review));
   });
-  container.appendChild(ul);
+  container.insertBefore(title, container.firstChild);
 }
 
 /**
@@ -198,6 +199,6 @@ const getParameterByName = (name, url) => {
 }
 
 fetchRestaurantFromURL().then((restaurant) => {
-  fillBreadcrumb();
+  fillBreadcrumb(restaurant);
 });
 fetchReviewsFromURL();

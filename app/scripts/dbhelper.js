@@ -79,6 +79,12 @@ export class DBHelper {
       });
   }
 
+  static updateFavoriteRestaurant(id, isFavorite) {
+    fetch(`${DBHelper.RESTAURANTS_URL}/${id}/?is_favorite=${isFavorite}`, {
+      method: 'PUT',
+    });
+  }
+
   /**
    * Fetch reviews by restaurant ID.
    */
