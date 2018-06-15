@@ -8,9 +8,16 @@ export class DBHelper {
    * Database URL.
    * Change this to restaurants.json file location on your server.
    */
-  static get DATABASE_URL() {
-    const port = 1337;
-    return `http://localhost:${port}/restaurants`;
+  static get PORT() {
+    return 1337;
+  }
+
+  static get RESTAURANTS_URL() {
+    return `http://localhost:${DBHelper.PORT}/restaurants`;
+  }
+
+  static get REVIEWS_URL() {
+    return `http://localhost:${DBHelper.PORT}/reviews`;
   }
 
   static get IDB_NAME() {
@@ -21,11 +28,15 @@ export class DBHelper {
     return 'restaurants';
   }
 
+  static get IDB_REVIEWS() {
+    return 'reviews';
+  }
+
   /**
    * Fetch all restaurants.
    */
   static fetchRestaurants() {
-    return fetch(DBHelper.DATABASE_URL)
+    return fetch(DBHelper.RESTAURANTS_URL)
       .then(response => response.json())
       .then(restaurants => {
         DBHelper.openIDB().then(idb => {
@@ -54,7 +65,7 @@ export class DBHelper {
    * Fetch a restaurant by its ID.
    */
   static fetchRestaurantById(id) {
-    const url = `${DBHelper.DATABASE_URL}/${id}`;
+    const url = `${DBHelper.RESTAURANTS_URL}/${id}`;
     return fetch(url)
       .then(response => response.json())
       .catch(() => {
@@ -67,6 +78,24 @@ export class DBHelper {
         });
       });
   }
+
+  /**
+   * Fetch reviews by restaurant ID.
+   */
+  static fetchReviewsByRestaurantId(id) {
+    const url = `${DBHelper.REVIEWS_URL}?restaurant_id=${id}`;
+    return fetch(url)
+      .then(response => response.json())
+      .catch(() => {
+        return DBHelper.openIDB().then(idb => {
+          if (!idb) return;
+
+          const tx = idb.transaction(this.IDB_REVIEWS);
+          const store = tx.objectStore(this.IDB_REVIEWS);
+          return store.get(parseInt(id));
+        });
+      });        
+  }  
 
   /**
    * Fetch restaurants by a cuisine type with proper error handling.

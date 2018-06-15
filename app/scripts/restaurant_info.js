@@ -2,15 +2,14 @@ import { DBHelper } from './dbhelper';
 import { SWHelper } from './swhelper';
 
 let restaurant;
+let reviews;
 let favorite = false;
 
 SWHelper.register();
 
-const onError = (error) => console.error(error);
-
 const MAPS_API_KEY = 'AIzaSyBGLqWXqDetn8Cu0NfpDSloIWSwLupNRYE';
 
-window.toggleFavorite = () => {
+self.toggleFavorite = () => {
   favorite = !favorite;
 
   const favBtnId = 'fav-button';
@@ -51,6 +50,26 @@ const fetchRestaurantFromURL = () => {
     });
 }
 
+const fetchReviewsFromURL = () => {
+  if (self.reviews) { // restaurant already fetched!
+    return Promise.resolve(self.reviews);
+  }
+
+  const id = getParameterByName('id');
+  if (!id) { // no id found in URL
+    const error = 'No restaurant id in URL'
+    return Promise.reject(error);
+  }
+
+  return DBHelper
+    .fetchReviewsByRestaurantId(id)
+    .then((reviews) => {
+      self.reviews = reviews;
+      fillReviewsHTML(reviews);
+      return reviews;
+    });
+}
+
 /**
  * Create restaurant HTML and add it to the webpage
  */
@@ -77,8 +96,6 @@ const fillRestaurantHTML = (restaurant = self.restaurant) => {
   if (restaurant.operating_hours) {
     fillRestaurantHoursHTML();
   }
-  // fill reviews
-  fillReviewsHTML();
 }
 
 /**
@@ -134,7 +151,7 @@ const createReviewHTML = (review) => {
   li.appendChild(name);
 
   const date = document.createElement('p');
-  date.innerHTML = review.date;
+  date.innerHTML = dateString(review.createdAt);
   li.appendChild(date);
 
   const rating = document.createElement('p');
@@ -146,6 +163,11 @@ const createReviewHTML = (review) => {
   li.appendChild(comments);
 
   return li;
+}
+
+const dateString = (date) => {
+  const locale = window.navigator.language;
+  return new Intl.DateTimeFormat(locale, { year: 'numeric', month: 'long', day: 'numeric' }).format(date);
 }
 
 /**
@@ -177,4 +199,5 @@ const getParameterByName = (name, url) => {
 
 fetchRestaurantFromURL().then((restaurant) => {
   fillBreadcrumb();
-})
+});
+fetchReviewsFromURL();
