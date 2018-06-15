@@ -52,6 +52,9 @@
       <!-- Beginning restaurant -->
       <section id="restaurant-container">
         <h2 id="restaurant-name"></h2>
+        <button id="fav-button" onclick="toggleFavorite()">
+          <span class="heart"></span>
+        </button>
         <img id="restaurant-img">
         <p id="restaurant-cuisine"></p>
         <p id="restaurant-address"></p>
@@ -61,6 +64,8 @@
       <!-- Beginning reviews -->
       <section id="reviews-container">
         <ul id="reviews-list"></ul>
+        <textarea id="add-comment" placeholder="Remember, be nice!" cols="30" rows="5"></textarea>
+        <button>Add</button>
       </section>
       <!-- End reviews -->
     </main>

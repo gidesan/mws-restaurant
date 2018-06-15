@@ -2,13 +2,31 @@ import { DBHelper } from './dbhelper';
 import { SWHelper } from './swhelper';
 
 let restaurant;
-var map;
+let favorite = false;
 
 SWHelper.register();
 
 const onError = (error) => console.error(error);
 
 const MAPS_API_KEY = 'AIzaSyBGLqWXqDetn8Cu0NfpDSloIWSwLupNRYE';
+
+window.toggleFavorite = () => {
+  favorite = !favorite;
+
+  const favBtnId = 'fav-button';
+  const favBtnSelectedClass = 'fav-button-selected';
+  const label = favorite ? 'Remove from favorites' : 'Add to favorites';
+
+  const favButton = document.getElementById(favBtnId);
+  favButton.setAttribute('aria-label', label);
+  favButton.setAttribute('title', label);
+
+  if (favorite) {
+    favButton.classList.add(favBtnSelectedClass);
+  } else {
+    favButton.classList.remove(favBtnSelectedClass);
+  };
+};
 
 /**
  * Get current restaurant from page URL.

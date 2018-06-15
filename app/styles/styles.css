@@ -274,6 +274,30 @@ nav h1 a {
   text-transform: uppercase;
   line-height: 1.1;
 }
+#fav-button {
+  border: none;
+  background-color: transparent;
+}
+.fav-button-selected {
+  animation: pulse 0.4s ease;
+}
+.heart {
+  font-size: 3em;
+  font-family: 'Archivo Black', sans-serif;
+}
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.3); }
+  100% { transform: scale(1); }
+}
+.heart:before {
+  content: '\2665';
+  color: grey;
+}
+.fav-button-selected .heart:before {
+  content: '\2665';
+  color: #B30000;
+}
 #restaurant-img {
 	width: 90%;
 }
