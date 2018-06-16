@@ -9,10 +9,20 @@ SWHelper.register();
 const MAPS_API_KEY = 'AIzaSyBGLqWXqDetn8Cu0NfpDSloIWSwLupNRYE';
 
 self.toggleFavorite = () => {
-  const favorite = self.restaurant.is_favorite = !self.restaurant.is_favorite;
+  let isFavorite = self.restaurant.is_favorite.toLowerCase() === 'true';
+  isFavorite = !isFavorite;
+  const id = getParameterByName('id');
 
-  
+  DBHelper
+    .updateFavoriteRestaurant(id, isFavorite)
+    .then(() => {
+      refreshFavoriteButton(isFavorite);
+    })
+  .catch((err) => console.error(err));
+};
 
+
+const refreshFavoriteButton = (favorite) => {
   const favBtnId = 'fav-button';
   const favBtnSelectedClass = 'fav-button-selected';
   const label = favorite ? 'Remove from favorites' : 'Add to favorites';
@@ -25,7 +35,7 @@ self.toggleFavorite = () => {
     favButton.classList.add(favBtnSelectedClass);
   } else {
     favButton.classList.remove(favBtnSelectedClass);
-  };
+  };  
 };
 
 /**
@@ -200,5 +210,7 @@ const getParameterByName = (name, url) => {
 
 fetchRestaurantFromURL().then((restaurant) => {
   fillBreadcrumb(restaurant);
+  const isFavorite = self.restaurant.is_favorite.toLowerCase() === 'true';
+  refreshFavoriteButton(isFavorite);
 });
 fetchReviewsFromURL();

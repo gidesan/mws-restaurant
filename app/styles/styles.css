@@ -351,6 +351,15 @@ nav h1 a {
 #restaurant-hours td {
   color: #666;
 }
+.add-comment textarea {
+  resize: none;
+  width: 100%;
+}
+.add-comment button {
+  width: 48px;
+  height: 48px;
+  float: right;
+}
 
 @media screen and (min-width: 550px) {
   #breadcrumb {
