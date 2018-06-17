@@ -278,7 +278,7 @@ nav h1 a {
   border: none;
   background-color: transparent;
 }
-.fav-button-selected {
+.fav-button-animated {
   animation: pulse 0.4s ease;
 }
 .heart {

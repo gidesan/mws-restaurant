@@ -9,22 +9,23 @@ SWHelper.register();
 const MAPS_API_KEY = 'AIzaSyBGLqWXqDetn8Cu0NfpDSloIWSwLupNRYE';
 
 self.toggleFavorite = () => {
-  let isFavorite = self.restaurant.is_favorite.toLowerCase() === 'true';
-  isFavorite = !isFavorite;
+  const isFavorite = !self.restaurant.is_favorite;
   const id = getParameterByName('id');
 
   DBHelper
     .updateFavoriteRestaurant(id, isFavorite)
     .then(() => {
-      refreshFavoriteButton(isFavorite);
+      const animate = true;
+      refreshFavoriteButton(isFavorite, animate);
+      self.restaurant.is_favorite = isFavorite;
     })
   .catch((err) => console.error(err));
 };
 
-
-const refreshFavoriteButton = (favorite) => {
+const refreshFavoriteButton = (favorite, animate) => {
   const favBtnId = 'fav-button';
   const favBtnSelectedClass = 'fav-button-selected';
+  const favBtnAnimatedClass = 'fav-button-animated';
   const label = favorite ? 'Remove from favorites' : 'Add to favorites';
 
   const favButton = document.getElementById(favBtnId);
@@ -33,9 +34,12 @@ const refreshFavoriteButton = (favorite) => {
 
   if (favorite) {
     favButton.classList.add(favBtnSelectedClass);
+    if (animate) {
+      favButton.classList.add(favBtnAnimatedClass);
+    }
   } else {
     favButton.classList.remove(favBtnSelectedClass);
-  };  
+  };
 };
 
 /**
@@ -210,7 +214,6 @@ const getParameterByName = (name, url) => {
 
 fetchRestaurantFromURL().then((restaurant) => {
   fillBreadcrumb(restaurant);
-  const isFavorite = self.restaurant.is_favorite.toLowerCase() === 'true';
-  refreshFavoriteButton(isFavorite);
+  refreshFavoriteButton(restaurant.is_favorite);
 });
 fetchReviewsFromURL();
