@@ -38,6 +38,7 @@ export class DBHelper {
   static fetchRestaurants() {
     return fetch(DBHelper.RESTAURANTS_URL)
       .then(response => response.json())
+      .then(restaurants => DBHelper.fixFavoriteType(restaurants))
       .then(restaurants => {
         DBHelper.openIDB().then(idb => {
           if (!idb) return;
@@ -68,6 +69,7 @@ export class DBHelper {
     const url = `${DBHelper.RESTAURANTS_URL}/${id}`;
     return fetch(url)
       .then(response => response.json())
+      .then(restaurant => DBHelper.fixFavoriteType(restaurant))
       .catch(() => {
         return DBHelper.openIDB().then(idb => {
           if (!idb) return;
@@ -226,5 +228,15 @@ export class DBHelper {
     });
   }
 
-
+  /**
+   * WARNING: Doing a PUT to change favorite status of a restaurant changes is_favorite field from boolean to string
+   * the following method fixes this issue
+   */
+  static fixFavoriteType(data) {
+    const booleanOf = (val) => typeof(val) === "boolean" ? val : val === 'true';
+    const doFix = (restaurant) => {
+      return Object.assign({}, restaurant, {is_favorite : booleanOf(restaurant.is_favorite)});
+    };
+    return Array.isArray(data) ? data.map(doFix) : doFix(data);
+  }
 }
