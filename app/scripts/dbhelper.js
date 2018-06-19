@@ -81,11 +81,24 @@ export class DBHelper {
       });
   }
 
+  /**
+   * Set / Unset a restaurant as favorite.
+   */  
   static updateFavoriteRestaurant(id, isFavorite) {
     return fetch(`${DBHelper.RESTAURANTS_URL}/${id}/?is_favorite=${isFavorite}`, {
       method: 'PUT',
     });
   }
+    
+  /**
+   * Create a review
+   */  
+  static createReview(body) {
+    return fetch(DBHelper.REVIEWS_URL, {
+      method: 'POST', 
+      body
+    });  
+  }    
 
   /**
    * Fetch reviews by restaurant ID.

@@ -277,6 +277,8 @@ nav h1 a {
 #fav-button {
   border: none;
   background-color: transparent;
+  width: 50px;
+  height: 50px;
 }
 .fav-button-animated {
   animation: pulse 0.4s ease;
@@ -351,14 +353,28 @@ nav h1 a {
 #restaurant-hours td {
   color: #666;
 }
-.add-comment textarea {
+#add-review-form button,
+#add-review-form input, 
+#add-review-form textarea {
+  font-size: 1rem;
+  padding: 10px;
+  margin-top: 5px;
+  min-width: 60px;
+}
+#add-review-form input[name="name"] {
+  width: 80%;
+}
+#add-review-form input[name="rating"] {
+  width: 19%;
+}
+#add-review-form textarea {
   resize: none;
   width: 100%;
 }
-.add-comment button {
-  width: 48px;
-  height: 48px;
-  float: right;
+#add-review-form button {
+  min-width: 48px;
+  min-height: 48px;  
+  float: right;  
 }
 
 @media screen and (min-width: 550px) {

@@ -8,6 +8,19 @@ SWHelper.register();
 
 const MAPS_API_KEY = 'AIzaSyBGLqWXqDetn8Cu0NfpDSloIWSwLupNRYE';
 
+self.submitReview = (event) => {
+  event.preventDefault();
+
+  const formData = new FormData(event.target);
+  const now = new Date().getTime();
+  formData.append('createdAt', now);
+  formData.append('updatedAt', now);
+
+  return DBHelper
+    .createReview(formData)
+    .then(asd => console.log(asd));
+}
+
 self.toggleFavorite = () => {
   const isFavorite = !self.restaurant.is_favorite;
   const id = getParameterByName('id');
@@ -212,8 +225,14 @@ const getParameterByName = (name, url) => {
   return decodeURIComponent(results[2].replace(/\+/g, ' '));
 }
 
+const initReviewsForm = () => {
+  const form = document.getElementById('add-review-form');  
+  form.restaurant_id.setAttribute('value', self.restaurant.id);
+}
+
 fetchRestaurantFromURL().then((restaurant) => {
   fillBreadcrumb(restaurant);
   refreshFavoriteButton(restaurant.is_favorite);
+  initReviewsForm();
 });
 fetchReviewsFromURL();

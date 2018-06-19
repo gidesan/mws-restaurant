@@ -64,10 +64,13 @@
       <!-- Beginning reviews -->
       <section id="reviews-container">
         <ul id="reviews-list"></ul>
-        <form class="add-comment">
-          <textarea placeholder="Add your review!" rows="8"></textarea>
-          <button>Add</button>
-      </form>
+        <form id="add-review-form" onsubmit="submitReview(event)">
+          <input name="restaurant_id" type="hidden" aria-hidden="true" />
+          <input name="name" type="text" placeholder="Name" aria-label="Name" required />
+          <input name="rating" type="number" min="1" max="5" aria-label="Rating" required />
+          <textarea name="comments" rows="8" placeholder="Add your review!" aria-label="Review" required></textarea>
+          <button type="submit">Add</button>
+        </form>
       </section>
       <!-- End reviews -->
     </main>
