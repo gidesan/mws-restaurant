@@ -83,22 +83,46 @@ export class DBHelper {
 
   /**
    * Set / Unset a restaurant as favorite.
-   */  
+   */
   static updateFavoriteRestaurant(id, isFavorite) {
     return fetch(`${DBHelper.RESTAURANTS_URL}/${id}/?is_favorite=${isFavorite}`, {
       method: 'PUT',
     });
   }
-    
+
   /**
    * Create a review
-   */  
-  static createReview(body) {
-    return fetch(DBHelper.REVIEWS_URL, {
-      method: 'POST', 
-      body
-    });  
-  }    
+   */
+  static addReview(review) { // TODO refactor
+    let createdReview;
+    return DBHelper
+      .openIDB()
+      .then(idb => {
+        if (!idb) return Promise.resolve();
+
+        const tx = idb.transaction(this.IDB_REVIEWS, 'readwrite');
+        const store = tx.objectStore(this.IDB_REVIEWS);
+        return store.put(Object.assign({}, review, { pending: true }));
+      })
+      .then((id) => {
+        createdReview = Object.assign({}, review, { id });
+        return fetch(DBHelper.REVIEWS_URL, {
+          method: 'POST',
+          body: JSON.stringify(createdReview)
+        });
+      })
+      .then(_ => {
+        DBHelper
+          .openIDB()
+          .then(idb => {
+            if (!idb) return Promise.resolve();
+
+            const tx = idb.transaction(this.IDB_REVIEWS, 'readwrite');
+            const store = tx.objectStore(this.IDB_REVIEWS);
+            return store.put(Object.assign({}, createdReview, { pending: false }));
+          });
+      });
+  }
 
   /**
    * Fetch reviews by restaurant ID.
@@ -107,6 +131,18 @@ export class DBHelper {
     const url = `${DBHelper.REVIEWS_URL}?restaurant_id=${id}`;
     return fetch(url)
       .then(response => response.json())
+      .then(reviews => {
+        DBHelper.openIDB().then(idb => {
+          if (!idb) return;
+
+          const tx = idb.transaction(this.IDB_REVIEWS, 'readwrite');
+          const store = tx.objectStore(this.IDB_REVIEWS);
+          reviews.forEach((review) => {
+            store.put(review);
+          });
+        });
+        return reviews;
+      })
       .catch(() => {
         return DBHelper.openIDB().then(idb => {
           if (!idb) return;
@@ -115,8 +151,8 @@ export class DBHelper {
           const store = tx.objectStore(this.IDB_REVIEWS);
           return store.get(parseInt(id));
         });
-      });        
-  }  
+      });
+  }
 
   /**
    * Fetch restaurants by a cuisine type with proper error handling.
@@ -235,8 +271,12 @@ export class DBHelper {
     }
 
     return idb.open(this.IDB_NAME, 1, (upgradeDb) => {
-      const store = upgradeDb.createObjectStore(this.IDB_RESTAURANTS, {
+      upgradeDb.createObjectStore(this.IDB_RESTAURANTS, {
         keyPath: 'id'
+      });
+      upgradeDb.createObjectStore(this.IDB_REVIEWS, {
+        keyPath: 'id',
+        autoIncrement: true
       });
     });
   }

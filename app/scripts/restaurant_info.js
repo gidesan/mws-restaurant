@@ -1,24 +1,40 @@
 import { DBHelper } from './dbhelper';
 import { SWHelper } from './swhelper';
 
-let restaurant;
-let reviews;
-
 SWHelper.register();
 
 const MAPS_API_KEY = 'AIzaSyBGLqWXqDetn8Cu0NfpDSloIWSwLupNRYE';
 
+
+const formDataToObject = (formData) => {
+  return [...formData].reduce((obj, [key, value]) => {
+    obj[key] = value;
+    return obj;
+    }, {});
+};
+
 self.submitReview = (event) => {
   event.preventDefault();
-
-  const formData = new FormData(event.target);
   const now = new Date().getTime();
-  formData.append('createdAt', now);
-  formData.append('updatedAt', now);
+
+  const review = Object.assign(
+    {},
+    formDataToObject(new FormData(event.target)),
+    {
+      createdAt: now,
+      updatedAt: now,
+    }
+  );
 
   return DBHelper
-    .createReview(formData)
-    .then(asd => console.log(asd));
+    .addReview(review)
+    .then((res) => {
+      console.log('Review added!');
+      console.log(res);
+    })
+    .catch((err) => {
+      console.error(err);
+    });
 }
 
 self.toggleFavorite = () => {
@@ -226,7 +242,7 @@ const getParameterByName = (name, url) => {
 }
 
 const initReviewsForm = () => {
-  const form = document.getElementById('add-review-form');  
+  const form = document.getElementById('add-review-form');
   form.restaurant_id.setAttribute('value', self.restaurant.id);
 }
 
