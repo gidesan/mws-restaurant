@@ -51,7 +51,7 @@ export class DBHelper {
         });
         return restaurants;
       })
-      .catch(err => {
+      .catch(_ => {
         return DBHelper.openIDB().then(idb => {
           if (!idb) return;
 

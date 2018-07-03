@@ -109,7 +109,6 @@ const fetchReviewsFromURL = () => {
     .fetchReviewsByRestaurantId(id)
     .then((reviews) => {
       self.reviews = reviews;
-      fillReviewsHTML(reviews);
       return reviews;
     });
 }
@@ -241,14 +240,16 @@ const getParameterByName = (name, url) => {
   return decodeURIComponent(results[2].replace(/\+/g, ' '));
 }
 
-const initReviewsForm = () => {
+const initReviewsForm = (restaurantId) => {
   const form = document.getElementById('add-review-form');
-  form.restaurant_id.setAttribute('value', self.restaurant.id);
+  form.restaurant_id.setAttribute('value', restaurantId);
 }
 
-fetchRestaurantFromURL().then((restaurant) => {
-  fillBreadcrumb(restaurant);
-  refreshFavoriteButton(restaurant.is_favorite);
-  initReviewsForm();
-});
-fetchReviewsFromURL();
+Promise
+  .all([fetchRestaurantFromURL(), fetchReviewsFromURL()])
+  .then(([restaurant, reviews]) => {
+    fillBreadcrumb(restaurant);
+    refreshFavoriteButton(restaurant.is_favorite);
+    initReviewsForm(restaurant.id);
+    fillReviewsHTML(reviews);
+  });
