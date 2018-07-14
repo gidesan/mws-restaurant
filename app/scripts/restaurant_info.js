@@ -23,17 +23,21 @@ self.addReview = (event) => {
     updatedAt: now,
   };
 
-  const appendReviewMarkup = (review) => {
+  const updateMarkup = (review) => {
     const ul = document.getElementById('reviews-list');
     ul.appendChild(createReviewHTML(review));
+
+    form.name.value = '';
+    form.rating.value = '';
+    form.comments.value = '';
   }
 
-  return !registeredServiceWorker ? DBHelper.createReview(review).then(_ => appendReviewMarkup(review))
+  return !registeredServiceWorker ? DBHelper.createReview(review).then(_ => updateMarkup(review))
     : LocalDBHelper
       .enqueueReview(review)
       .then((id) => {
         const enqueuedReview = Object.assign({}, review, { id });
-        appendReviewMarkup(enqueuedReview);
+        updateMarkup(enqueuedReview);
         return registeredServiceWorker.sync.register(`syncReview_${id}`);
     })
     .catch((err) => {
