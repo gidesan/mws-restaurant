@@ -9,25 +9,19 @@ SWHelper
   .register()
   .then(reg => registeredServiceWorker = reg);
 
-const formDataToObject = (formData) => {
-  return [...formData].reduce((obj, [key, value]) => {
-    obj[key] = value;
-    return obj;
-    }, {});
-};
-
 self.addReview = (event) => {
   event.preventDefault();
   const now = new Date().getTime();
+  const form = event.target;
 
-  const review = Object.assign(
-    {},
-    formDataToObject(new FormData(event.target)),
-    {
-      createdAt: now,
-      updatedAt: now,
-    }
-  );
+  const review = {
+    restaurant_id: parseInt(form.restaurant_id.value),
+    name: form.name.value,
+    rating: form.rating.value,
+    comments: form.comments.value,
+    createdAt: now,
+    updatedAt: now,
+  };
 
   const appendReviewMarkup = (review) => {
     const ul = document.getElementById('reviews-list');

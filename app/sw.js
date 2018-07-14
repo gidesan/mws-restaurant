@@ -49,7 +49,7 @@ self.addEventListener('sync', (event) => {
       return DBHelper
         .createReview(enqueuedReview)
         .then(res => {
-          LocalDBHelper.dequeueReview(enqueuedReview);
+          return LocalDBHelper.dequeueReview(enqueuedReview);
         });
     })
 
