@@ -259,7 +259,7 @@ export class DBHelper {
    * the following method fixes this issue
    */
   static fixFavoriteType(data) {
-    const booleanOf = (val) => typeof(val) === "boolean" ? val : val === 'true';
+    const booleanOf = (val) => typeof(val) === 'boolean' ? val : val === 'true';
     const doFix = (restaurant) => {
       return Object.assign({}, restaurant, {is_favorite : booleanOf(restaurant.is_favorite)});
     };
