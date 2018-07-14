@@ -1,5 +1,5 @@
-import { LocalDBHelper } from "./scripts/localdbhelper";
-import { DBHelper } from "./scripts/dbhelper";
+import { LocalDBHelper } from './scripts/localdbhelper';
+import { DBHelper } from './scripts/dbhelper';
 
 const staticCacheName = 'rr-static-v1';
 const contentImgsCache = 'rr-content-imgs';
@@ -27,8 +27,7 @@ self.addEventListener('activate', (event) => {
     caches.keys().then((cacheNames) => {
       return Promise.all(
         cacheNames.filter((cacheName) => {
-          return cacheName.startsWith('rr-') &&
-                 !allCaches.includes(cacheName);
+          return cacheName.startsWith('rr-') && !allCaches.includes(cacheName);
         }).map((cacheName) => {
           return caches.delete(cacheName);
         })
