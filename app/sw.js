@@ -45,8 +45,10 @@ self.addEventListener('sync', (event) => {
   const syncReview = LocalDBHelper
     .getReview(reviewId)
     .then(enqueuedReview => {
+      let review = Object.assign({}, enqueuedReview);
+      delete review.pending;
       return DBHelper
-        .createReview(enqueuedReview)
+        .createReview(review)
         .then(res => {
           return LocalDBHelper.dequeueReview(enqueuedReview);
         });
