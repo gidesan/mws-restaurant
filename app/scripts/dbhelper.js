@@ -125,7 +125,8 @@ export class DBHelper {
 
           const tx = idb.transaction(DBHelper.IDB_REVIEWS);
           const store = tx.objectStore(DBHelper.IDB_REVIEWS);
-          return store.get(parseInt(id));
+          const idx = store.index('restaurant_id');
+          return idx.getAll(parseInt(id));
         });
       });
   }
@@ -249,7 +250,7 @@ export class DBHelper {
       upgradeDb.createObjectStore(DBHelper.IDB_REVIEWS, {
         keyPath: 'id',
         autoIncrement: true
-      });
+      }).createIndex('restaurant_id', 'restaurant_id');
     });
   }
 

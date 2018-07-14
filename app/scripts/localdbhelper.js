@@ -54,7 +54,7 @@ export class LocalDBHelper {
       upgradeDb.createObjectStore(LocalDBHelper.IDB_REVIEWS, {
         keyPath: 'id',
         autoIncrement: true
-      });
+      }).createIndex('restaurant_id', 'restaurant_id');
     });
   }
 }
