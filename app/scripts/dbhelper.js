@@ -43,8 +43,8 @@ export class DBHelper {
         DBHelper.openIDB().then(idb => {
           if (!idb) return;
 
-          const tx = idb.transaction(this.IDB_RESTAURANTS, 'readwrite');
-          const store = tx.objectStore(this.IDB_RESTAURANTS);
+          const tx = idb.transaction(DBHelper.IDB_RESTAURANTS, 'readwrite');
+          const store = tx.objectStore(DBHelper.IDB_RESTAURANTS);
           restaurants.forEach((restaurant) => {
             store.put(restaurant);
           });
@@ -55,8 +55,8 @@ export class DBHelper {
         return DBHelper.openIDB().then(idb => {
           if (!idb) return;
 
-          const tx = idb.transaction(this.IDB_RESTAURANTS);
-          const store = tx.objectStore(this.IDB_RESTAURANTS);
+          const tx = idb.transaction(DBHelper.IDB_RESTAURANTS);
+          const store = tx.objectStore(DBHelper.IDB_RESTAURANTS);
           return store.getAll();
         });
       });
@@ -74,8 +74,8 @@ export class DBHelper {
         return DBHelper.openIDB().then(idb => {
           if (!idb) return;
 
-          const tx = idb.transaction(this.IDB_RESTAURANTS);
-          const store = tx.objectStore(this.IDB_RESTAURANTS);
+          const tx = idb.transaction(DBHelper.IDB_RESTAURANTS);
+          const store = tx.objectStore(DBHelper.IDB_RESTAURANTS);
           return store.get(parseInt(id));
         });
       });
@@ -93,35 +93,11 @@ export class DBHelper {
   /**
    * Create a review
    */
-  static addReview(review) { // TODO refactor
-    let createdReview;
-    return DBHelper
-      .openIDB()
-      .then(idb => {
-        if (!idb) return Promise.resolve();
-
-        const tx = idb.transaction(this.IDB_REVIEWS, 'readwrite');
-        const store = tx.objectStore(this.IDB_REVIEWS);
-        return store.put(Object.assign({}, review, { pending: true }));
-      })
-      .then((id) => {
-        createdReview = Object.assign({}, review, { id });
-        return fetch(DBHelper.REVIEWS_URL, {
-          method: 'POST',
-          body: JSON.stringify(createdReview)
-        });
-      })
-      .then(_ => {
-        DBHelper
-          .openIDB()
-          .then(idb => {
-            if (!idb) return Promise.resolve();
-
-            const tx = idb.transaction(this.IDB_REVIEWS, 'readwrite');
-            const store = tx.objectStore(this.IDB_REVIEWS);
-            return store.put(Object.assign({}, createdReview, { pending: false }));
-          });
-      });
+  static createReview(review) {
+    return fetch(DBHelper.REVIEWS_URL, {
+      method: 'POST',
+      body: JSON.stringify(review)
+    });
   }
 
   /**
@@ -135,8 +111,8 @@ export class DBHelper {
         DBHelper.openIDB().then(idb => {
           if (!idb) return;
 
-          const tx = idb.transaction(this.IDB_REVIEWS, 'readwrite');
-          const store = tx.objectStore(this.IDB_REVIEWS);
+          const tx = idb.transaction(DBHelper.IDB_REVIEWS, 'readwrite');
+          const store = tx.objectStore(DBHelper.IDB_REVIEWS);
           reviews.forEach((review) => {
             store.put(review);
           });
@@ -147,8 +123,8 @@ export class DBHelper {
         return DBHelper.openIDB().then(idb => {
           if (!idb) return;
 
-          const tx = idb.transaction(this.IDB_REVIEWS);
-          const store = tx.objectStore(this.IDB_REVIEWS);
+          const tx = idb.transaction(DBHelper.IDB_REVIEWS);
+          const store = tx.objectStore(DBHelper.IDB_REVIEWS);
           return store.get(parseInt(id));
         });
       });
@@ -266,15 +242,11 @@ export class DBHelper {
   }
 
   static openIDB() {
-    if (!navigator.serviceWorker) {
-      return Promise.resolve();
-    }
-
-    return idb.open(this.IDB_NAME, 1, (upgradeDb) => {
-      upgradeDb.createObjectStore(this.IDB_RESTAURANTS, {
+    return idb.open(DBHelper.IDB_NAME, 1, (upgradeDb) => {
+      upgradeDb.createObjectStore(DBHelper.IDB_RESTAURANTS, {
         keyPath: 'id'
       });
-      upgradeDb.createObjectStore(this.IDB_REVIEWS, {
+      upgradeDb.createObjectStore(DBHelper.IDB_REVIEWS, {
         keyPath: 'id',
         autoIncrement: true
       });

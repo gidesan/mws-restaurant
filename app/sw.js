@@ -1,3 +1,6 @@
+import { LocalDBHelper } from "./scripts/localdbhelper";
+import { DBHelper } from "./scripts/dbhelper";
+
 const staticCacheName = 'rr-static-v1';
 const contentImgsCache = 'rr-content-imgs';
 const allCaches = [
@@ -32,6 +35,25 @@ self.addEventListener('activate', (event) => {
       );
     })
   );
+});
+
+self.addEventListener('sync', (event) => {
+  if (!event || !event.tag || !event.tag.includes('syncReview')) {
+    return;
+  }
+  const reviewId = Number(event.tag.split('_')[1]);
+
+  const syncReview = LocalDBHelper
+    .getReview(reviewId)
+    .then(enqueuedReview => {
+      return DBHelper
+        .createReview(enqueuedReview)
+        .then(res => {
+          LocalDBHelper.dequeueReview(enqueuedReview);
+        });
+    })
+
+  event.waitUntil(syncReview);
 });
 
 self.addEventListener('fetch', function(event) {

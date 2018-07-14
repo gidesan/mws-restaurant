@@ -1,8 +1,10 @@
 export class SWHelper {
-  static register() {
-    // based on service worker registration in https://github.com/facebook/create-react-app/
+  static register() { // based on service worker registration in https://github.com/facebook/create-react-app/
+    if (!navigator.serviceWorker) {
+      return;
+    }
     const swUrl = '/sw.js';
-    navigator.serviceWorker
+    return navigator.serviceWorker
       .register(swUrl)
       .then(registration => {
         console.log('ServiceWorker registration successful with scope: ', registration.scope);
@@ -18,6 +20,7 @@ export class SWHelper {
             }
           };
         };
+        return registration;
       })
       .catch(error => {
         console.error('Error during service worker registration:', error);

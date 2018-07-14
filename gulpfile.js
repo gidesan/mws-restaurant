@@ -25,7 +25,7 @@ gulp.task('styles', () => {
     .pipe(reload({stream: true}));
 });
 
-gulp.task('scripts', ['homeScript', 'detailScript']);
+gulp.task('scripts', ['homeScript', 'detailScript', 'swScript']);
 
 gulp.task('homeScript', () => {
   const b = browserify({
@@ -58,6 +58,23 @@ gulp.task('detailScript', () => {
     .pipe($.if(dev, $.sourcemaps.init({loadMaps: true})))
     .pipe($.if(dev, $.sourcemaps.write('.')))
     .pipe(gulp.dest('.tmp/scripts'))
+    .pipe(reload({stream: true}));
+});
+
+gulp.task('swScript', () => {
+  const b = browserify({
+    entries: ['app/sw.js'],
+    transform: babelify,
+    debug: true
+  });
+
+  return b.bundle()
+    .pipe(source('sw.js'))
+    .pipe($.plumber())
+    .pipe(buffer())
+    .pipe($.if(dev, $.sourcemaps.init({loadMaps: true})))
+    .pipe($.if(dev, $.sourcemaps.write('.')))
+    .pipe(gulp.dest('.tmp'))
     .pipe(reload({stream: true}));
 });
 

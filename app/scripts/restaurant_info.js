@@ -1,10 +1,13 @@
 import { DBHelper } from './dbhelper';
+import { LocalDBHelper } from './localdbhelper';
 import { SWHelper } from './swhelper';
 
-SWHelper.register();
-
 const MAPS_API_KEY = 'AIzaSyBGLqWXqDetn8Cu0NfpDSloIWSwLupNRYE';
+let registeredServiceWorker;
 
+SWHelper
+  .register()
+  .then(reg => registeredServiceWorker = reg);
 
 const formDataToObject = (formData) => {
   return [...formData].reduce((obj, [key, value]) => {
@@ -13,7 +16,7 @@ const formDataToObject = (formData) => {
     }, {});
 };
 
-self.submitReview = (event) => {
+self.addReview = (event) => {
   event.preventDefault();
   const now = new Date().getTime();
 
@@ -26,11 +29,18 @@ self.submitReview = (event) => {
     }
   );
 
-  return DBHelper
-    .addReview(review)
-    .then((res) => {
-      console.log('Review added!');
-      console.log(res);
+  const appendReviewMarkup = (review) => {
+    const ul = document.getElementById('reviews-list');
+    ul.appendChild(createReviewHTML(review));
+  }
+
+  return !registeredServiceWorker ? DBHelper.createReview(review).then(_ => appendReviewMarkup(review))
+    : LocalDBHelper
+      .enqueueReview(review)
+      .then((id) => {
+        const enqueuedReview = Object.assign({}, review, { id });
+        appendReviewMarkup(enqueuedReview);
+        return registeredServiceWorker.sync.register(`syncReview_${id}`);
     })
     .catch((err) => {
       console.error(err);
