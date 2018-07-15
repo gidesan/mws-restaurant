@@ -26,7 +26,7 @@ export class LocalDBHelper {
       });
   }
 
-  static storeReview(review, pending) {
+  static saveReview(review) {
     return LocalDBHelper
       .openIDB()
       .then(idb => {
@@ -34,16 +34,8 @@ export class LocalDBHelper {
 
         const tx = idb.transaction(LocalDBHelper.IDB_REVIEWS, 'readwrite');
         const store = tx.objectStore(LocalDBHelper.IDB_REVIEWS);
-        return store.put(Object.assign({}, review, { pending }));
+        return store.put(review);
       });
-  }
-
-  static enqueueReview(review) {
-    return LocalDBHelper.storeReview(review, true);
-  }
-
-  static dequeueReview(review) {
-    return LocalDBHelper.storeReview(review, false);
   }
 
   static openIDB() {

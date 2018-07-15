@@ -34,10 +34,10 @@ self.addReview = (event) => {
 
   return !registeredServiceWorker ? DBHelper.createReview(review).then(_ => updateMarkup(review))
     : LocalDBHelper
-      .enqueueReview(review)
+      .saveReview(review)
       .then((id) => {
-        const enqueuedReview = Object.assign({}, review, { id });
-        updateMarkup(enqueuedReview);
+        const savedReview = Object.assign({}, review, { id });
+        updateMarkup(savedReview);
         return registeredServiceWorker.sync.register(`syncReview_${id}`);
     })
     .catch((err) => {

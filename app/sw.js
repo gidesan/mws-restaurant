@@ -40,18 +40,12 @@ self.addEventListener('sync', (event) => {
   if (!event || !event.tag || !event.tag.includes('syncReview')) {
     return;
   }
-  const reviewId = Number(event.tag.split('_')[1]);
+  const reviewId = parseInt(event.tag.split('_')[1]);
 
   const syncReview = LocalDBHelper
     .getReview(reviewId)
-    .then(enqueuedReview => {
-      let review = Object.assign({}, enqueuedReview);
-      delete review.pending;
-      return DBHelper
-        .createReview(review)
-        .then(res => {
-          return LocalDBHelper.dequeueReview(enqueuedReview);
-        });
+    .then(review => {
+      return DBHelper.createReview(review);
     })
 
   event.waitUntil(syncReview);
