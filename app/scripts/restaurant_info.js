@@ -75,6 +75,7 @@ const refreshFavoriteButton = (favorite, animate) => {
       favButton.classList.add(favBtnAnimatedClass);
     }
   } else {
+    favButton.classList.remove(favBtnAnimatedClass);
     favButton.classList.remove(favBtnSelectedClass);
   };
 };
