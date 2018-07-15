@@ -74,7 +74,7 @@ gulp.task('swScript', () => {
     .pipe(buffer())
     .pipe($.if(dev, $.sourcemaps.init({loadMaps: true})))
     .pipe($.if(dev, $.sourcemaps.write('.')))
-    .pipe(gulp.dest('.tmp'))
+    .pipe($.if(dev, gulp.dest('.tmp'), gulp.dest('dist')))
     .pipe(reload({stream: true}));
 });
 
@@ -121,14 +121,14 @@ gulp.task('images', () => {
           width: 228,
           rename: {
             suffix: '-1x'
-          },          
+          },
           quality: 40
         },
         {
           width: 228 * 2,
           rename: {
             suffix: '-2x'
-          },          
+          },
           quality: 75
       }]
     }))
@@ -138,7 +138,7 @@ gulp.task('images', () => {
 gulp.task('icons', () => {
   return gulp.src('app/icons/**/*')
     .pipe($.cache($.imagemin()))
-    .pipe(gulp.dest('dist/icons'));
+    .pipe($.if(dev, gulp.dest('.tmp/icons'), gulp.dest('dist/icons')));
 });
 
 gulp.task('fonts', () => {
