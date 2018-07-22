@@ -25,7 +25,7 @@ gulp.task('styles', () => {
     .pipe(reload({stream: true}));
 });
 
-gulp.task('scripts', ['homeScript', 'detailScript', 'swScript']);
+gulp.task('scripts', ['homeScript', 'detailScript']);
 
 gulp.task('homeScript', () => {
   const b = browserify({
@@ -179,6 +179,7 @@ gulp.task('serve', () => {
 
     gulp.watch('app/styles/**/*.css', ['styles']);
     gulp.watch('app/scripts/**/*.js', ['scripts']);
+    gulp.watch('app/sw.js', ['swScript']);
     gulp.watch('app/fonts/**/*', ['fonts']);
     gulp.watch('bower.json', ['wiredep', 'fonts']);
   });
@@ -209,6 +210,7 @@ gulp.task('serve:test', ['scripts'], () => {
   });
 
   gulp.watch('app/scripts/**/*.js', ['scripts']);
+  gulp.watch('app/sw.js', ['swScript']);
   gulp.watch(['test/spec/**/*.js', 'test/index.html']).on('change', reload);
   gulp.watch('test/spec/**/*.js', ['lint:test']);
 });
