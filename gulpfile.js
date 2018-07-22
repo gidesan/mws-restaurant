@@ -25,7 +25,7 @@ gulp.task('styles', () => {
     .pipe(reload({stream: true}));
 });
 
-gulp.task('scripts', ['homeScript', 'detailScript']);
+gulp.task('scripts', ['homeScript', 'detailScript', 'swScript']);
 
 gulp.task('homeScript', () => {
   const b = browserify({
@@ -95,7 +95,7 @@ gulp.task('lint:test', () => {
     .pipe(gulp.dest('test/spec'));
 });
 
-gulp.task('html', ['styles', 'scripts', 'swScript'], () => {
+gulp.task('html', ['styles', 'scripts'], () => {
   return gulp.src('app/*.html')
     .pipe($.useref({searchPath: ['.tmp', 'app', '.']}))
     .pipe($.if(/\.js$/, $.uglify({compress: {drop_console: true}})))
@@ -159,7 +159,7 @@ gulp.task('extras', () => {
 gulp.task('clean', del.bind(null, ['.tmp', 'dist']));
 
 gulp.task('serve', () => {
-  runSequence(['clean', 'wiredep'], ['styles', 'scripts', 'swScript', 'images', 'fonts'], () => {
+  runSequence(['clean', 'wiredep'], ['styles', 'scripts', 'images', 'fonts'], () => {
     browserSync.init({
       notify: false,
       port: 9000,
