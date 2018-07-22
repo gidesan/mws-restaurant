@@ -273,12 +273,14 @@ nav h1 a {
   margin: 15px 0 30px;
   text-transform: uppercase;
   line-height: 1.1;
+  display: inline-block;
 }
 #fav-button {
   border: none;
   background-color: transparent;
   width: 50px;
   height: 50px;
+  float: right;
 }
 .fav-button-animated {
   animation: pulse 0.4s ease;
@@ -378,13 +380,12 @@ nav h1 a {
   font-size: 1rem;
   padding: 10px;
   margin-top: 5px;
-  min-width: 60px;
 }
 #add-review-form input[name="name"] {
-  width: 80%;
+  width: calc(100% - 95px);
 }
 #add-review-form input[name="rating"] {
-  width: 19%;
+  width: 90px;
 }
 #add-review-form textarea {
   resize: none;

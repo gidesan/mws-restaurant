@@ -67,8 +67,8 @@
         <form id="add-review-form" onsubmit="addReview(event)">
           <input name="restaurant_id" type="hidden" aria-hidden="true" />
           <input name="name" type="text" placeholder="Name" aria-label="Name" required />
-          <input name="rating" type="number" min="1" max="5" aria-label="Rating" required />
-          <textarea name="comments" rows="8" placeholder="Add your review!" aria-label="Review" required></textarea>
+          <input name="rating" type="number" placeholder="Rating (1-5)" min="1" max="5" aria-label="Rating (1-5)" required />
+          <textarea name="comments" rows="8" placeholder="Comments" aria-label="Comments" required></textarea>
           <button type="submit">Add</button>
         </form>
       </section>
