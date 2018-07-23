@@ -1,4 +1,3 @@
-import { LocalDBHelper } from './scripts/localdbhelper';
 import { DBHelper } from './scripts/dbhelper';
 
 const staticCacheName = 'rr-static-v1';
@@ -42,8 +41,8 @@ self.addEventListener('sync', (event) => {
   }
   const reviewId = parseInt(event.tag.split('_')[1]);
 
-  const syncReview = LocalDBHelper
-    .getReview(reviewId)
+  const syncReview = DBHelper
+    .getIDBReview(reviewId)
     .then(review => {
       return DBHelper.createReview(review);
     })

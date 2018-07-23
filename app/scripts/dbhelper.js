@@ -242,6 +242,31 @@ export class DBHelper {
     return marker;
   }
 
+
+  static getIDBReview(id) {
+    return DBHelper
+      .openIDB()
+      .then(idb => {
+        if (!idb) return Promise.resolve();
+
+        const tx = idb.transaction(DBHelper.IDB_REVIEWS, 'readonly');
+        const store = tx.objectStore(DBHelper.IDB_REVIEWS);
+        return store.get(id);
+      });
+  }
+
+  static saveIDBReview(review) {
+    return DBHelper
+      .openIDB()
+      .then(idb => {
+        if (!idb) return Promise.resolve();
+
+        const tx = idb.transaction(DBHelper.IDB_REVIEWS, 'readwrite');
+        const store = tx.objectStore(DBHelper.IDB_REVIEWS);
+        return store.put(review);
+      });
+  }
+
   static openIDB() {
     return idb.open(DBHelper.IDB_NAME, 1, (upgradeDb) => {
       upgradeDb.createObjectStore(DBHelper.IDB_RESTAURANTS, {

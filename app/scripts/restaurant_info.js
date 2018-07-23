@@ -1,5 +1,4 @@
 import { DBHelper } from './dbhelper';
-import { LocalDBHelper } from './localdbhelper';
 import { SWHelper } from './swhelper';
 
 const MAPS_API_KEY = 'AIzaSyBGLqWXqDetn8Cu0NfpDSloIWSwLupNRYE';
@@ -33,8 +32,8 @@ self.addReview = (event) => {
   }
 
   return !registeredServiceWorker ? DBHelper.createReview(review).then(_ => updateMarkup(review))
-    : LocalDBHelper
-      .saveReview(review)
+    : DBHelper
+      .saveIDBReview(review)
       .then((id) => {
         const savedReview = Object.assign({}, review, { id });
         updateMarkup(savedReview);
