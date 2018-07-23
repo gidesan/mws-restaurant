@@ -38,7 +38,11 @@ self.addReview = (event) => {
       .then((id) => {
         const savedReview = Object.assign({}, review, { id });
         updateMarkup(savedReview);
-        return registeredServiceWorker.sync.register(`syncReview_${id}`);
+        return DBHelper
+          .createReview(savedReview)
+          .catch(() => {
+            return registeredServiceWorker.sync.register(`syncReview_${id}`);
+          });
     })
     .catch((err) => {
       console.error(err);
