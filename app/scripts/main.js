@@ -3,9 +3,9 @@ import { SWHelper } from './swhelper';
 
 let restaurants,
   neighborhoods,
-  cuisines
-var map
-var markers = []
+  cuisines,
+  map,
+  markers = []
 
 SWHelper.register();
 
@@ -13,6 +13,7 @@ SWHelper.register();
  * Fetch neighborhoods and cuisines as soon as the page is loaded.
  */
 document.addEventListener('DOMContentLoaded', (event) => {
+  updateRestaurants();
   fetchNeighborhoods();
   fetchCuisines();
 });
@@ -83,12 +84,11 @@ window.initMap = () => {
     center: loc,
     scrollwheel: false
   });
-  updateRestaurants();
+  addMarkersToMap();
 }
 
 window.onMapsError = () => {
   console.warn('maps loading error :( ');
-  updateRestaurants();
 };
 
 /**
@@ -151,7 +151,6 @@ const fillRestaurantsHTML = (restaurants = self.restaurants) => {
   restaurants.forEach(restaurant => {
     ul.append(createRestaurantHTML(restaurant));
   });
-  addMarkersToMap();
 }
 
 /**
