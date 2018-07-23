@@ -52,14 +52,26 @@ self.toggleFavorite = () => {
   const isFavorite = !self.restaurant.is_favorite;
   const id = getParameterByName('id');
 
-  DBHelper
-    .updateFavoriteRestaurant(id, isFavorite)
-    .then(() => {
-      const animate = true;
-      refreshFavoriteButton(isFavorite, animate);
-      self.restaurant.is_favorite = isFavorite;
+  const updateMarkup = (isFavorite) => {
+    const animate = true;
+    refreshFavoriteButton(isFavorite, animate);
+    self.restaurant.is_favorite = isFavorite;
+  };
+
+  return !registeredServiceWorker ? DBHelper.updateFavoriteRestaurant(id, isFavorite).then(_ => updateMarkup(isFavorite))
+    : DBHelper
+      .updateIDBFavorite(isFavorite)
+      .then(() => {
+        updateMarkup(savedReview);
+        return DBHelper
+          .updateFavoriteRestaurant(id, isFavorite)
+          .catch(() => {
+            return registeredServiceWorker.sync.register(`syncFavorite_${id}_${isFavorite}`);
+          });
     })
-  .catch((err) => console.error(err));
+    .catch((err) => {
+      console.error(err);
+    });
 };
 
 const refreshFavoriteButton = (favorite, animate) => {

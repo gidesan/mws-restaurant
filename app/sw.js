@@ -36,18 +36,27 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('sync', (event) => {
-  if (!event || !event.tag || !event.tag.includes('syncReview')) {
+  if (!event || !event.tag) {
     return;
   }
-  const reviewId = parseInt(event.tag.split('_')[1]);
+  if (!event.tag.includes('syncReview')) {
+    const reviewId = parseInt(event.tag.split('_')[1]);
 
-  const syncReview = DBHelper
-    .getIDBReview(reviewId)
-    .then(review => {
-      return DBHelper.createReview(review);
-    })
+    const syncReview = DBHelper
+      .getIDBReview(reviewId)
+      .then(review => {
+        return DBHelper.createReview(review);
+      });
+    event.waitUntil(syncReview);
+  }
+  else if (!event.tag.includes('syncReview')) {
+    const args = event.tag.split('_');
+    const id = parseInt(args[1]);
+    const isFavorite = args[2] === 'true';
 
-  event.waitUntil(syncReview);
+    const syncFavorite = DBHelper.updateFavoriteRestaurant(id, isFavorite);
+    event.waitUntil(syncFavorite);
+  }
 });
 
 self.addEventListener('fetch', function(event) {
