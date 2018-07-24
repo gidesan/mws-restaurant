@@ -267,6 +267,18 @@ export class DBHelper {
       });
   }
 
+  static saveIDBRestaurant(restaurant) {
+    return DBHelper
+      .openIDB()
+      .then(idb => {
+        if (!idb) return Promise.resolve();
+
+        const tx = idb.transaction(DBHelper.IDB_RESTAURANTS, 'readwrite');
+        const store = tx.objectStore(DBHelper.IDB_RESTAURANTS);
+        return store.put(restaurant);
+      });
+  }
+
   static openIDB() {
     return idb.open(DBHelper.IDB_NAME, 1, (upgradeDb) => {
       upgradeDb.createObjectStore(DBHelper.IDB_RESTAURANTS, {

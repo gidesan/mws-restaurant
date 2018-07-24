@@ -39,7 +39,7 @@ self.addEventListener('sync', (event) => {
   if (!event || !event.tag) {
     return;
   }
-  if (!event.tag.includes('syncReview')) {
+  if (event.tag.includes('syncReview')) {
     const reviewId = parseInt(event.tag.split('_')[1]);
 
     const syncReview = DBHelper
@@ -49,7 +49,7 @@ self.addEventListener('sync', (event) => {
       });
     event.waitUntil(syncReview);
   }
-  else if (!event.tag.includes('syncReview')) {
+  else if (event.tag.includes('syncFavorite')) {
     const args = event.tag.split('_');
     const id = parseInt(args[1]);
     const isFavorite = args[2] === 'true';

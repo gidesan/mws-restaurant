@@ -49,20 +49,20 @@ self.addReview = (event) => {
 }
 
 self.toggleFavorite = () => {
-  const isFavorite = !self.restaurant.is_favorite;
   const id = getParameterByName('id');
+  self.restaurant.is_favorite = !self.restaurant.is_favorite;
+  const isFavorite = self.restaurant.is_favorite;
 
   const updateMarkup = (isFavorite) => {
     const animate = true;
     refreshFavoriteButton(isFavorite, animate);
-    self.restaurant.is_favorite = isFavorite;
   };
 
   return !registeredServiceWorker ? DBHelper.updateFavoriteRestaurant(id, isFavorite).then(_ => updateMarkup(isFavorite))
     : DBHelper
-      .updateIDBFavorite(isFavorite)
+      .saveIDBRestaurant(self.restaurant)
       .then(() => {
-        updateMarkup(savedReview);
+        updateMarkup(isFavorite);
         return DBHelper
           .updateFavoriteRestaurant(id, isFavorite)
           .catch(() => {
