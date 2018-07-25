@@ -39,13 +39,15 @@ self.addEventListener('sync', (event) => {
   if (!event || !event.tag) {
     return;
   }
-  if (event.tag.includes('syncReview')) {
-    const reviewId = parseInt(event.tag.split('_')[1]);
-
+  if (event.tag === 'syncReviews') {
     const syncReview = DBHelper
-      .getIDBReview(reviewId)
-      .then(review => {
-        return DBHelper.createReview(review);
+      .getIDBReviewsQueue()
+      .then(reviewsQueue => {
+        return Promise.all(reviewsQueue.map((review) => {
+          return DBHelper
+            .createReview(review)
+            .then(() => DBHelper.dequeueIDBReview(review));
+        }));
       });
     event.waitUntil(syncReview);
   }

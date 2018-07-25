@@ -8,6 +8,10 @@ SWHelper
   .register()
   .then(reg => registeredServiceWorker = reg);
 
+window.addEventListener('online',  () => {
+  registeredServiceWorker.sync.register('syncReviews');
+});
+
 self.addReview = (event) => {
   event.preventDefault();
   const now = new Date().getTime();
@@ -31,8 +35,8 @@ self.addReview = (event) => {
     form.comments.value = '';
   }
 
-  return !registeredServiceWorker ? DBHelper.createReview(review).then(_ => updateMarkup(review))
-    : DBHelper
+  const saveReviewWithSW = () => {
+    return DBHelper
       .saveIDBReview(review)
       .then((id) => {
         const savedReview = Object.assign({}, review, { id });
@@ -40,12 +44,22 @@ self.addReview = (event) => {
         return DBHelper
           .createReview(savedReview)
           .catch(() => {
-            return registeredServiceWorker.sync.register(`syncReview_${id}`);
+            return DBHelper.enqueueIDBReview(savedReview);
           });
-    })
-    .catch((err) => {
-      console.error(err);
-    });
+      });
+  }
+
+  const saveReviewWithoutSW = (review) => {
+    return DBHelper
+      .createReview(review)
+      .then(_ => updateMarkup(review));
+  }
+
+  const saveReview = registeredServiceWorker ? saveReviewWithSW : saveReviewWithoutSW;
+
+  return saveReview(review).catch((err) => {
+    console.error(err);
+  });
 }
 
 self.toggleFavorite = () => {
@@ -125,16 +139,23 @@ const fetchReviewsFromURL = () => {
 
   const id = getParameterByName('id');
   if (!id) { // no id found in URL
-    const error = 'No restaurant id in URL'
+    const error = 'No restaurant id in URL';
     return Promise.reject(error);
   }
+
+  const getIDBReviews = () => {
+    //TODO retrieve reviews from IDB by restaurant ID
+    self.reviews = reviews;
+    return reviews;
+  };
 
   return DBHelper
     .fetchReviewsByRestaurantId(id)
     .then((reviews) => {
       self.reviews = reviews;
       return reviews;
-    });
+    })
+    .catch(getIDBReviews);
 }
 
 /**

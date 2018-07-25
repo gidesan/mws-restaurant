@@ -32,6 +32,10 @@ export class DBHelper {
     return 'reviews';
   }
 
+  static get IDB_REVIEWS_QUEUE() {
+    return 'reviewsQueue';
+  }
+
   /**
    * Fetch all restaurants.
    */
@@ -242,6 +246,17 @@ export class DBHelper {
     return marker;
   }
 
+  static getIDBReviewsQueue() {
+    return DBHelper
+      .openIDB()
+      .then(idb => {
+        if (!idb) return Promise.resolve();
+
+        const tx = idb.transaction(DBHelper.IDB_REVIEWS, 'readonly');
+        const store = tx.objectStore(DBHelper.IDB_REVIEWS);
+        return store.getAll();
+      });
+  }
 
   static getIDBReview(id) {
     return DBHelper
@@ -267,6 +282,30 @@ export class DBHelper {
       });
   }
 
+  static enqueueIDBReview(review) {
+    return DBHelper
+      .openIDB()
+      .then(idb => {
+        if (!idb) return Promise.resolve();
+
+        const tx = idb.transaction(DBHelper.IDB_REVIEWS_QUEUE, 'readwrite');
+        const store = tx.objectStore(DBHelper.IDB_REVIEWS_QUEUE);
+        return store.put(review);
+      });
+  }
+
+  static dequeueIDBReview(review) {
+    return DBHelper
+      .openIDB()
+      .then(idb => {
+        if (!idb) return Promise.resolve();
+
+        const tx = idb.transaction(DBHelper.IDB_REVIEWS_QUEUE, 'readwrite');
+        const store = tx.objectStore(DBHelper.IDB_REVIEWS_QUEUE);
+        return store.delete(review.id);
+      });
+  }
+
   static saveIDBRestaurant(restaurant) {
     return DBHelper
       .openIDB()
@@ -288,6 +327,9 @@ export class DBHelper {
         keyPath: 'id',
         autoIncrement: true
       }).createIndex('restaurant_id', 'restaurant_id');
+      upgradeDb.createObjectStore(DBHelper.IDB_REVIEWS_QUEUE, {
+        keyPath: 'id'
+      });
     });
   }
 
