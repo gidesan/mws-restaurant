@@ -16,6 +16,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
   updateRestaurants();
   fetchNeighborhoods();
   fetchCuisines();
+  DBHelper.initIDBReviews();
 });
 
 /**

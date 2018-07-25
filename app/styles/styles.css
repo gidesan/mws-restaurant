@@ -282,6 +282,9 @@ nav h1 a {
   height: 50px;
   float: right;
 }
+#fav-button:hover {
+  cursor: pointer;
+}
 .fav-button-animated {
   animation: pulse 0.4s ease;
 }

@@ -41,7 +41,12 @@ export class DBHelper {
    */
   static fetchRestaurants() {
     return fetch(DBHelper.RESTAURANTS_URL)
-      .then(response => response.json())
+      .then(response => {
+        if (response.ok)
+          return response.json();
+
+        throw new Error('unable to fetch restaurants from the server');
+      })
       .then(restaurants => DBHelper.fixFavoriteType(restaurants))
       .then(restaurants => {
         DBHelper.openIDB().then(idb => {
@@ -109,30 +114,68 @@ export class DBHelper {
    */
   static fetchReviewsByRestaurantId(id) {
     const url = `${DBHelper.REVIEWS_URL}?restaurant_id=${id}`;
-    return fetch(url)
-      .then(response => response.json())
+    return DBHelper
+      .getIDBReviewsByRestaurantId(id)
       .then(reviews => {
-        DBHelper.openIDB().then(idb => {
-          if (!idb) return;
-
-          const tx = idb.transaction(DBHelper.IDB_REVIEWS, 'readwrite');
-          const store = tx.objectStore(DBHelper.IDB_REVIEWS);
-          reviews.forEach((review) => {
-            store.put(review);
+        return reviews && reviews.length ? reviews : fetch(url)
+          .then(response => response.json())
+          .then(reviews => {
+            return DBHelper.saveIDBReviews(reviews);
           });
-        });
-        return reviews;
-      })
-      .catch(() => {
-        return DBHelper.openIDB().then(idb => {
-          if (!idb) return;
-
-          const tx = idb.transaction(DBHelper.IDB_REVIEWS);
-          const store = tx.objectStore(DBHelper.IDB_REVIEWS);
-          const idx = store.index('restaurant_id');
-          return idx.getAll(parseInt(id));
-        });
       });
+  }
+
+  static initIDBReviews() {
+    const url = DBHelper.REVIEWS_URL;
+    return fetch(url)
+      .then(response => {
+        if (response.ok)
+          return response.json();
+
+        throw new Error('unable to fetch restaurants from the server');
+      })
+      .then(reviews => {
+        if (reviews && reviews.length)
+          return DBHelper.saveIDBReviews(reviews);
+        return reviews;
+      });
+  }
+
+  static saveIDBReview(review) {
+    return DBHelper
+      .openIDB()
+      .then(idb => {
+        if (!idb) return Promise.resolve();
+
+        const tx = idb.transaction(DBHelper.IDB_REVIEWS, 'readwrite');
+        const store = tx.objectStore(DBHelper.IDB_REVIEWS);
+        return store.put(review);
+      });
+  }
+
+  static saveIDBReviews(reviews) {
+    return DBHelper.
+      openIDB()
+      .then(idb => {
+        if (!idb) return Promise.resolve();
+
+        const tx = idb.transaction(DBHelper.IDB_REVIEWS, 'readwrite');
+        const store = tx.objectStore(DBHelper.IDB_REVIEWS);
+        return Promise.all(reviews.map((review) => {
+          return store.put(review);
+        }));
+      });
+  }
+
+  static getIDBReviewsByRestaurantId(id) {
+    return DBHelper.openIDB().then(idb => {
+      if (!idb) return Promise.resolve();
+
+      const tx = idb.transaction(DBHelper.IDB_REVIEWS);
+      const store = tx.objectStore(DBHelper.IDB_REVIEWS);
+      const idx = store.index('restaurant_id');
+      return idx.getAll(parseInt(id));
+    });
   }
 
   /**
@@ -267,18 +310,6 @@ export class DBHelper {
         const tx = idb.transaction(DBHelper.IDB_REVIEWS, 'readonly');
         const store = tx.objectStore(DBHelper.IDB_REVIEWS);
         return store.get(id);
-      });
-  }
-
-  static saveIDBReview(review) {
-    return DBHelper
-      .openIDB()
-      .then(idb => {
-        if (!idb) return Promise.resolve();
-
-        const tx = idb.transaction(DBHelper.IDB_REVIEWS, 'readwrite');
-        const store = tx.objectStore(DBHelper.IDB_REVIEWS);
-        return store.put(review);
       });
   }
 

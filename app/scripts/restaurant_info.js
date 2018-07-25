@@ -143,19 +143,12 @@ const fetchReviewsFromURL = () => {
     return Promise.reject(error);
   }
 
-  const getIDBReviews = () => {
-    //TODO retrieve reviews from IDB by restaurant ID
-    self.reviews = reviews;
-    return reviews;
-  };
-
   return DBHelper
     .fetchReviewsByRestaurantId(id)
     .then((reviews) => {
       self.reviews = reviews;
       return reviews;
-    })
-    .catch(getIDBReviews);
+    });
 }
 
 /**
